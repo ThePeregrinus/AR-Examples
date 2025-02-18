@@ -116,9 +116,23 @@ function initialize()
 	
 	renderer.shadowMap.enabled = true;
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+	function createCircle(position, rotation, texture) {
+		const geometry = new THREE.CircleGeometry(0.2, 32); 
+		const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+		const circle = new THREE.Mesh(geometry, material);
+
+		circle.position.set(position.x, position.y, position.z);
+		circle.rotation.x = THREE.Math.degToRad(rotation.x);
+		circle.rotation.y = THREE.Math.degToRad(rotation.y);
+		circle.rotation.z = THREE.Math.degToRad(rotation.z);
+    return circle;
+}
+
 	
 	let loader = new THREE.TextureLoader();
-		
+	const texture = loader.load('images/info.png');
+
 	let sceneGroup = new THREE.Group();
 	markerRoot1.add(sceneGroup);
 	
@@ -131,26 +145,53 @@ function initialize()
 	sceneGroup.add( floorMesh );
 	
 	
-	ballMeshArray = [];
-	let ballTexture = loader.load("images/basketball-gray.png");
-	let ballColors = [ 0xff0000, 0x009900, 0xff8800, 0x0000ff ];
-	let p = 1;
-	let ballPositions = [ new THREE.Vector3(p,1,p), new THREE.Vector3(-p,1,p), 
-	                      new THREE.Vector3(-p,1,-p), new THREE.Vector3(p,1,-p) ];
-	for (let n = 0; n < 4; n++)
-	{
-		let ballMesh = new THREE.Mesh(
-			new THREE.SphereGeometry(0.5, 32, 32),
-			new THREE.MeshLambertMaterial({ 
-				map: ballTexture, 
-				color: ballColors[n]
-			})
-		);
-		ballMesh.position.copy(ballPositions[n]);
-		ballMesh.castShadow = true;
-		sceneGroup.add( ballMesh );
-		ballMeshArray[n] = ballMesh;
-	}
+	// ballMeshArray = [];
+	// let ballTexture = loader.load("images/basketball-gray.png");
+	// let ballColors = [ 0xff0000, 0x009900, 0xff8800, 0x0000ff ];
+	// let p = 1;
+	// let ballPositions = [ new THREE.Vector3(p,1,p), new THREE.Vector3(-p,1,p), 
+	//                       new THREE.Vector3(-p,1,-p), new THREE.Vector3(p,1,-p) ];
+	// for (let n = 0; n < 4; n++)
+	// {
+	// 	let ballMesh = new THREE.Mesh(
+	// 		new THREE.SphereGeometry(0.5, 32, 32),
+	// 		new THREE.MeshLambertMaterial({ 
+	// 			map: ballTexture, 
+	// 			color: ballColors[n]
+	// 		})
+	// 	);
+	// 	ballMesh.position.copy(ballPositions[n]);
+	// 	ballMesh.castShadow = true;
+	// 	sceneGroup.add( ballMesh );
+	// 	ballMeshArray[n] = ballMesh;
+	// }
+
+	const circlesData = [
+    { position: { x: 0, y: 0, z: 0 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: -1.400, y: 2.100, z: -0.250 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: -0.150, y: 5.500, z: -8.450 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: 5.040, y: 0.000, z: 6.000 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: 8.530, y: 1.100, z: -10.000 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: 5.320, y: 0.000, z: 0.380 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: -3.220, y: 4.550, z: -0.330 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: -2.440, y: 6.240, z: -7.800 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: -7.800, y: 4.630, z: 2.560 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: 3.550, y: 4.300, z: -9.420 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: -0.250, y: 5.100, z: -7.900 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: 10.000, y: -6.590, z: -3.350 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: 5.470, y: 2.460, z: -8.850 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: 8.420, y: 0.670, z: -9.450 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: 1.400, y: 0.780, z: 2.400 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: 12.860, y: -1.800, z: -10.820 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: 10.000, y: -9.390, z: 3.260 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: -5.680, y: 4.300, z: 0.790 }, rotation: { x: -90, y: 180, z: 0 } },
+    { position: { x: -1.490, y: 0.250, z: 1.560 }, rotation: { x: -90, y: 180, z: 0 } },
+];
+
+circlesData.forEach(data => {
+    const circle = createCircle(data.position, data.rotation, texture);
+    sceneGroup.add(circle);
+});
 	
 	let light = new THREE.PointLight( 0xffffff, 1, 100 );
 	light.position.set( 0,4,0 ); // default; light shining from top
@@ -180,10 +221,10 @@ function update()
 	if ( arToolkitSource.ready !== false )
 		arToolkitContext.update( arToolkitSource.domElement );
 	
-	ballMeshArray[0].position.y = 1.2 * (Math.abs(Math.sin(2.00 * totalTime + 0.10)) + 0.5);
-	ballMeshArray[1].position.y = 1.1 * (Math.abs(Math.sin(2.33 * totalTime + 0.37)) + 0.5);
-	ballMeshArray[2].position.y = 1.3 * (Math.abs(Math.sin(2.71 * totalTime + 0.53)) + 0.5);
-	ballMeshArray[3].position.y = 0.9 * (Math.abs(Math.sin(3.02 * totalTime + 0.77)) + 0.5);
+	// ballMeshArray[0].position.y = 1.2 * (Math.abs(Math.sin(2.00 * totalTime + 0.10)) + 0.5);
+	// ballMeshArray[1].position.y = 1.1 * (Math.abs(Math.sin(2.33 * totalTime + 0.37)) + 0.5);
+	// ballMeshArray[2].position.y = 1.3 * (Math.abs(Math.sin(2.71 * totalTime + 0.53)) + 0.5);
+	// ballMeshArray[3].position.y = 0.9 * (Math.abs(Math.sin(3.02 * totalTime + 0.77)) + 0.5);
 }
 
 
